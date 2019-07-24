@@ -1,20 +1,149 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <form [formGroup]="userForm">
+        <div class="row">
+          <div class="col">
+            <h1 class="font-weight-bolder"> Schedule a new event
+            </h1>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6 form-group">
+            <label for="title" class="font-weight-bold">Event Title <app-mandatory></app-mandatory></label>
+            <input type="text" class="form-control" formControlName="title">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6 form-group">
+            <label class="font-weight-bold" for="timezone">
+              Time Zone</label>
+            <select class="form-control" formControlName="timezone">
+              <option value="IST">IST</option>
+              <option value="PST">PST</option>
+              <option value="China">China</option>
+              <option value="Thailand">Thailand</option>
+            </select>
+          </div>
+          <div class="col-3 form-group">
+            <label for="from" class="font-weight-bold">
+              Run Window</label>
+            <ng-template #tipContent>
+              <app-time-picker-tooltip [data]="from" (okClicked)="handleClick($event,t,'from')">
+              </app-time-picker-tooltip>
+            </ng-template>
+            <div class="input-group">
+              <input type="text" class="form-control" formControlName="from">
+              <div class="input-group-append">
+                <button name="Search" tooltipClass="mytooltip" [ngbTooltip]="tipContent" triggers="manual"
+                  #t="ngbTooltip" (click)="t.open()" [autoClose]="false" class="btn btn-outline-primary">
+                  <i class="far fa-clock"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-3 form-group">
+            <label for="to">
+              &nbsp;</label>
+            <ng-template #tipContent2>
+              <app-time-picker-tooltip [data]="to" (okClicked)="handleClick($event,t1,'to')"></app-time-picker-tooltip>
+            </ng-template>
+            <div class="input-group">
+              <input type="text" class="form-control" formControlName="to">
+              <div class="input-group-append">
+                <button name="Search" tooltipClass="mytooltip" [ngbTooltip]="tipContent2" triggers="manual"
+                  #t1="ngbTooltip" [autoClose]="false" (click)="t1.open()" class="btn btn-outline-primary">
+                  <i class="far fa-clock"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col form-group">
+            <label for="days" class="font-weight-bold">Select days <app-mandatory></app-mandatory></label><br>
+            <div class="form-check form-check-inline" formArrayName="days"
+              *ngFor="let day of daysOptions; let i = index">
+              <input type="checkbox" class="form-check-input" [formControlName]="i">
+              <label for="days" class="form-check-label">{{day}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col form-group">
+            <label for="guests" class="form-control-label" class="font-weight-bold"> Add guests <app-mandatory>
+              </app-mandatory></label>
+            <tag-input [formControlName]="'guests'" [errorMessages]="errorMessages" [editable]="true"
+              [secondaryPlaceholder]="'add guests'" placeholder="add guests" [validators]="emailValidators">
+            </tag-input>
 
+          </div>
+        </div>
+        <div class="row">
+          <div class="col form-group">
+            <label class="font-weight-bold"> Guests can</label><br>
+            <div class="form-check form-check-inline" formArrayName="guestActions"
+              *ngFor="let guestAction of guestOptions; let i = index">
+              <input type="checkbox" class="form-check-input" [formControlName]="i" value="Bike">
+              <label for="guests" class="form-check-label"> {{guestAction}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col form-group">
+            <label class="font-weight-bold">Notification type</label> <br>
+            <div class="form-check form-check-inline">
+              <input type="radio" class="form-check-input" formControlName="notificationType" value="email">
+              <label class="form-check-label">Email notification</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="radio" class="form-check-input" formControlName="notificationType" value="sms">
+              <label class="form-check-label">SMS notification</label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col form-group">
+            <ng-template #tipContent3>
+              <app-time-picker-tooltip (okClicked)="handleClick($event,t3,'notifytimes')"></app-time-picker-tooltip>
+            </ng-template>
+            <label class="form-control-label font-weight-bold">Notification start times <app-mandatory></app-mandatory>
+            </label>
+            <div class="input-group">
+              <tag-input [formControlName]="'notifyStartTimes'" [errorMessages]="errorMessages"
+                [validators]="notifyValidators" [secondaryPlaceholder]="'add new time'" placeholder="Add new time"
+                name="items">
+              </tag-input>
+              <div>
+                <button name="Search" [autoClose]="false" tooltipClass="mytooltip" [ngbTooltip]="tipContent3"
+                  triggers="manual" #t3="ngbTooltip" (click)="t3.open()" class="btn btn-outline-primary">
+                  <i class="far fa-clock"></i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col form-group">
+            <label class="form-control-label font-weight-bold">Message <app-mandatory></app-mandatory></label>
+            <textarea rows="4" cols="50" class="form-control" formControlName="comments"
+              placeholder="Write description for email message"></textarea>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col footer">
+            <button type="button" (click)="saveUser()" class="btn btn-outline-primary float-right"
+              [disabled]="!userForm.valid">Save
+              Event</button>
+            <button type="button" class="btn btn-outline-primary float-right">Cancel</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+
+  </div>
+
+</div>
